@@ -134,9 +134,12 @@ class Tabs(NamedListPanel):
         super()._server_change(doc, ref, subpath, attr, old, new)
 
     def _update_active(self, *events):
+        from ..io import hold
+
         for event in events:
             if event.name == 'dynamic' or (self.dynamic and event.name == 'active'):
-                self.param.trigger('objects')
+                with hold(freeze=True):
+                    self.param.trigger('objects')
                 return
 
     def _compute_sizing_mode(self, children, props):
